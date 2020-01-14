@@ -9,7 +9,7 @@ if __name__ == "__main__":
 
     html = requests.get("https://en.wikipedia.org/wiki/2019_in_spaceflight#Orbital_launches").text #grabing the html from wikipedia
     soup = BeautifulSoup(html, 'html5lib')
-
+# selecting orbital launches table
     table = soup.find('table', {'class':'wikitable collapsible'})
     dates = []
     rows = table.find_all('tr')
@@ -18,12 +18,13 @@ if __name__ == "__main__":
             td = tr.find_all('td')[0]
             date = td.find_all('span', {"class":"nowrap"})
             dates.append(date[0].text)
+#normalizing date format
     date_array = []
     for each in dates:
         normal = re.sub(u"\\(.*?\\)|\\{.*?}|\\[.*?]", "", each)
         datetime = parse(normal+ '2019')
         date_array.append(datetime.isoformat())
-
+#creating dates dict in 2019 year
     date1 = '2019-01-01'
     date2 = '2019-12-31'
     mydates = pd.date_range(date1, date2).tolist()
@@ -34,7 +35,7 @@ if __name__ == "__main__":
     for each in date_array:
         if each in days_dict:
             days_dict[each]+=1
-
+#output the result
     with open('output.csv', 'w') as f:
         for key in days_dict.keys():
             f.write("%s,%s\n"%(key,days_dict[key]))
